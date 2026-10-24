@@ -1,0 +1,259 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100svh; /* svh = tinggi stabil, tidak lompat saat address bar muncul/hilang */
+  background: #261a42;
+  font-family: 'DM Sans', sans-serif;
+  color: #f1e9ff;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.screen {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* sembunyikan scrollbar bawaan (scroll tetap berfungsi) */
+html,
+body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.5); }
+}
+.mote {
+  position: absolute;
+  bottom: -20px;
+  border-radius: 50%;
+  filter: blur(1px);
+  animation: rise linear infinite;
+}
+@keyframes rise {
+  0% { transform: translateY(0); opacity: 0; }
+  15% { opacity: 0.7; }
+  100% { transform: translateY(-110vh); opacity: 0; }
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0.6;
+}
+.star.twinkle {
+  animation: twinkle ease-in-out infinite;
+}
+/* lapisan 2x lebih besar supaya sudut layar tidak kosong saat berputar */
+.star-layer {
+  position: absolute;
+  left: -50%;
+  top: -50%;
+  width: 200%;
+  height: 200%;
+  animation: spin 240s linear infinite;
+  will-change: transform;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.shooting {
+  position: absolute;
+  width: 110px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
+  opacity: 0;
+  animation: shoot linear infinite;
+}
+.shooting::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 10px 3px rgba(240, 194, 255, 0.8);
+}
+@keyframes shoot {
+  0% { opacity: 0; transform: rotate(-35deg) translateX(0); }
+  2% { opacity: 1; }
+  7% { opacity: 0; transform: rotate(-35deg) translateX(-380px); }
+  100% { opacity: 0; transform: rotate(-35deg) translateX(-380px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shooting { display: none; }
+}
+
+/* ---------- Desember: kereta, hujan di jendela ---------- */
+.drift {
+  animation: drift linear infinite;
+  will-change: transform;
+}
+@keyframes drift {
+  to { transform: translateX(-520px); }
+}
+.wheel {
+  animation: spin 0.5s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.streak {
+  position: absolute;
+  left: 0;
+  height: 2px;
+  width: 90px;
+  border-radius: 2px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0));
+  animation: streak linear infinite;
+}
+@keyframes streak {
+  from { transform: translateX(420px); }
+  to { transform: translateX(-120px); }
+}
+.drop {
+  position: absolute;
+  top: -24px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.75));
+  animation: raindrop linear infinite;
+}
+@keyframes raindrop {
+  to { transform: translateY(280px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .drift, .wheel, .streak, .drop { animation: none !important; }
+}
+
+html,
+body {
+  overflow-x: clip;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---------- Januari ---------- */
+.lane {
+  animation: lane 0.45s linear infinite;
+}
+@keyframes lane {
+  to { background-position: -48px 0; }
+}
+.flake {
+  position: absolute;
+  top: -12px;
+  border-radius: 50%;
+  background: #fff;
+  animation: snowfall linear infinite;
+}
+@keyframes snowfall {
+  to { transform: translate(var(--sx, 18px), 580px); }
+}
+.blink {
+  animation: blink 1.2s steps(2, start) infinite;
+}
+@keyframes blink {
+  50% { opacity: 0.2; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lane, .flake, .blink { animation: none !important; }
+}
+
+/* ---------- Februari ---------- */
+.rain {
+  position: absolute;
+  top: -40px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(214, 232, 255, 0.85));
+  animation: rainfall linear infinite;
+}
+@keyframes rainfall {
+  to { transform: translateY(580px); }
+}
+.neon {
+  animation: neonblink 1.6s ease-in-out infinite;
+}
+@keyframes neonblink {
+  50% { opacity: 0.35; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rain, .neon { animation: none !important; }
+}
+
+/* ---------- Karakter (dari koala-kucing.svg) ---------- */
+.ch-breathe-k { transform-origin: 170px 360px; animation: chBreathe 3.2s ease-in-out infinite; }
+.ch-breathe-c { transform-origin: 430px 362px; animation: chBreathe 2.8s ease-in-out infinite -1s; }
+.ch-head-k { transform-origin: 170px 250px; animation: chTilt 5s ease-in-out infinite alternate; }
+.ch-head-c { transform-origin: 430px 270px; animation: chTilt 4.2s ease-in-out infinite alternate-reverse; }
+.ch-ear-kl { transform-origin: 124px 176px; animation: chEar 4.5s ease-in-out infinite; }
+.ch-ear-kr { transform-origin: 216px 176px; animation: chEar 4.5s ease-in-out infinite reverse; }
+.ch-ear-cl { transform-origin: 398px 196px; animation: chEar 3.6s ease-in-out infinite 0.6s; }
+.ch-ear-cr { transform-origin: 462px 196px; animation: chEar 5.1s ease-in-out infinite reverse; }
+.ch-blink { transform-box: fill-box; transform-origin: center; animation: chBlink 4.5s infinite; }
+.ch-blink.ch-c { animation-delay: -1.7s; }
+.ch-wave { transform-origin: 232px 262px; animation: chWave 1.4s ease-in-out infinite alternate; }
+.ch-wave-c { transform-origin: 396px 292px; animation: chWaveC 1.2s ease-in-out infinite alternate -0.5s; }
+.ch-tail { transform-origin: 480px 340px; animation: chTail 2.4s ease-in-out infinite alternate; }
+
+@keyframes chBreathe { 50% { transform: scaleY(1.025) scaleX(0.99); } }
+@keyframes chTilt { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
+@keyframes chEar { 0%, 80%, 100% { transform: rotate(0); } 88% { transform: rotate(-9deg); } 94% { transform: rotate(5deg); } }
+@keyframes chBlink { 0%, 92%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.08); } }
+@keyframes chWave { from { transform: rotate(8deg); } to { transform: rotate(-32deg); } }
+@keyframes chWaveC { from { transform: rotate(-4deg); } to { transform: rotate(26deg); } }
+@keyframes chTail { from { transform: rotate(-10deg); } to { transform: rotate(14deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .ch-breathe-k, .ch-breathe-c, .ch-head-k, .ch-head-c, .ch-ear-kl, .ch-ear-kr, .ch-ear-cl, .ch-ear-cr,
+  .ch-blink, .ch-wave, .ch-wave-c, .ch-tail { animation: none !important; }
+}
+
+/* ---------- Langkah kaki dan tawa ---------- */
+.ch-walk .ch-foot-a { animation: chStep 0.62s ease-in-out infinite; }
+.ch-walk .ch-foot-b { animation: chStep 0.62s ease-in-out infinite 0.31s; }
+.ch-run .ch-foot-a { animation: chStep 0.34s ease-in-out infinite; }
+.ch-run .ch-foot-b { animation: chStep 0.34s ease-in-out infinite 0.17s; }
+.ch-laugh-k { transform-origin: 170px 250px; animation: chLaugh 0.3s ease-in-out infinite; }
+.ch-laugh-c { transform-origin: 430px 270px; animation: chLaugh 0.3s ease-in-out infinite; }
+@keyframes chStep { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+@keyframes chLaugh { 0%, 100% { transform: translateY(0) rotate(-2.5deg); } 50% { transform: translateY(-5px) rotate(2.5deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .ch-walk .ch-foot-a, .ch-walk .ch-foot-b, .ch-run .ch-foot-a, .ch-run .ch-foot-b,
+  .ch-laugh-k, .ch-laugh-c { animation: none !important; }
+}
