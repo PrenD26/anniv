@@ -257,3 +257,7 @@ body {
   .ch-walk .ch-foot-a, .ch-walk .ch-foot-b, .ch-run .ch-foot-a, .ch-run .ch-foot-b,
   .ch-laugh-k, .ch-laugh-c { animation: none !important; }
 }
+
+.ch-laugh-k { transform-origin: 170px 250px; animation: chLaugh 0.55s ease-in-out infinite; }
+.ch-laugh-c { transform-origin: 430px 270px; animation: chLaugh 0.55s ease-in-out infinite; }
+@keyframes chLaugh { 0%, 100% { transform: translateY(0) rotate(-1.5deg); } 50% { transform: translateY(-3px) rotate(1.5deg); } }

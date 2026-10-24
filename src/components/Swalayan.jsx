@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { memo, useContext, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, animate, motion, useMotionValue, useMotionValueEvent, useSpring, useTransform } from 'framer-motion'
 import { SEPTEMBER } from '../data/september.js'
 import { H } from '../timeline.js'
@@ -128,12 +128,20 @@ function ShopWindow({ phase, closed, S }) {
       <motion.div className="absolute left-0 top-0 h-10 w-10 rounded-full" style={{ background: 'radial-gradient(circle,#fff6c9 40%,rgba(255,190,110,0) 72%)' }} animate={{ x: SUN[phase].x, y: SUN[phase].y, opacity: SUN[phase].o }} transition={{ duration: 1.6 }} />
       <span className="absolute inset-y-0 left-1/2 -ml-[2px] w-1 bg-[#8f78c9]" />
       <span className="absolute inset-x-0 top-[58%] h-1 bg-[#8f78c9]" />
-      <div className="absolute left-1/2 top-[30px] -translate-x-1/2" style={{ perspective: 300 }}>
+           <div className="absolute left-1/2 top-[30px] -translate-x-1/2">
         <span className="mx-auto block h-3 w-[2px] bg-[#6b5a85]" />
-        <motion.div className="relative h-[34px] w-[84px]" style={{ transformStyle: 'preserve-3d' }} animate={{ rotateY: closed ? 180 : 0 }} transition={{ type: 'spring', damping: 14, stiffness: 90 }}>
-          <div className="absolute inset-0 flex items-center justify-center rounded bg-[#e9fff3] text-sm font-extrabold tracking-wider text-[#2f9f6b] shadow" style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>{S.store.open}</div>
-          <div className="absolute inset-0 flex items-center justify-center rounded bg-[#ffecec] text-sm font-extrabold tracking-wider text-[#d6455a] shadow" style={{ transform: 'rotateY(180deg)', backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>{S.store.closed}</div>
-        </motion.div>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={closed ? 'tutup' : 'buka'}
+            className={`flex h-[34px] w-[84px] items-center justify-center rounded text-sm font-extrabold tracking-wider shadow ${closed ? 'bg-[#ffecec] text-[#d6455a]' : 'bg-[#e9fff3] text-[#2f9f6b]'}`}
+            initial={{ opacity: 0, y: -10, scaleY: 0.5 }}
+            animate={{ opacity: 1, y: 0, scaleY: 1 }}
+            exit={{ opacity: 0, y: 8, scaleY: 0.5 }}
+            transition={{ duration: 0.3 }}
+          >
+            {closed ? S.store.closed : S.store.open}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   )
@@ -215,7 +223,21 @@ function NotaCard({ R, onOpen, onEgg }) {
     </div>
   )
 }
+function Bubble({ text }) {
+  return (
+    <motion.div
+      className="pointer-events-none absolute bottom-full left-1/2 mb-1 w-[150px] -translate-x-1/2 rounded-2xl bg-white px-2.5 py-1.5 text-center text-[11px] font-semibold leading-snug text-[#3b2a63] shadow-lg"
+      initial={{ opacity: 0, y: 6, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+    >
+      {text}
+    </motion.div>
+  )
+}
 
+const BackdropM = memo(Backdrop)
+const ShopWindowM = memo(ShopWindow)
+const FurnitureM = memo(Furniture)
 /* ---------- bagian utama ---------- */
 export default function Swalayan() {
   const S = SEPTEMBER
@@ -577,16 +599,7 @@ export default function Swalayan() {
   const line = step === 'say' ? T.lines[talk.i] : null
   const showPack = mode === 'packing' || done.includes('packing')
 
-  const Bubble = ({ text }) => (
-    <motion.div
-      key={text}
-      className="pointer-events-none absolute bottom-full left-1/2 mb-1 w-[150px] -translate-x-1/2 rounded-2xl bg-white px-2.5 py-1.5 text-center text-[11px] font-semibold leading-snug text-[#3b2a63] shadow-lg"
-      initial={{ opacity: 0, y: 6, scale: 0.9 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-    >
-      {text}
-    </motion.div>
-  )
+
 
   return (
     <>
@@ -606,8 +619,8 @@ export default function Swalayan() {
             <div className="absolute left-0 top-0 overflow-hidden" style={{ width: VW, height: VH, transform: `scale(${k})`, transformOrigin: '0 0', background: '#efe6fb' }}>
               <div className="absolute left-0" style={{ top: VH - WORLD_H, width: VW, height: WORLD_H }}>
                 <motion.div className="absolute left-0 top-0" style={{ width: WORLD, height: WORLD_H, x: worldX, willChange: 'transform' }}>
-                  <Backdrop name={S.store.name} labels={S.store.chips} />
-                  <ShopWindow phase={phase} closed={night} S={S} />
+                <BackdropM name={S.store.name} labels={S.store.chips} />
+                  <ShopWindowM phase={phase} closed={night} S={S} />
 
                   {/* bayangan */}
                   <motion.div className="pointer-events-none absolute rounded-full bg-black/15" style={{ left: 0, top: GROUND - 5, width: 52, height: 9, x: kx, marginLeft: 10, zIndex: 4 }} />
@@ -621,19 +634,19 @@ export default function Swalayan() {
                   {/* koala dan kucing */}
                                     <motion.div className="absolute" style={{ left: 0, top: GROUND - BH, x: kx, y: kyN, rotate: kr, transformOrigin: '50% 80%', zIndex: 5, cursor: 'pointer' }} onClick={() => (active ? poke('koala') : activate())} role="button" tabIndex={0} aria-label="Ketuk koala">
                     <motion.div animate={bob} transition={bobT}>
-                      <KoalaBody size={BW} mood={kFace || mood} gait={gait} wave={!walking && !kFace} />
+                      <KoalaBody size={BW} mood={kFace || mood} gait={gait} wave={!walking} />
                     </motion.div>
                     {line && line.who === 'kyla' && <Bubble text={line.text} />}
                   </motion.div>
                   <motion.div className="absolute" style={{ left: 0, top: GROUND - BH, x: tx, y: tyN, rotate: tr, transformOrigin: '50% 80%', zIndex: 5, cursor: 'pointer' }} onClick={() => (active ? poke('cat') : activate())} role="button" tabIndex={0} aria-label="Ketuk kucing">
                     <motion.div animate={bob} transition={bobT}>
-                      <CatBody size={BW} mood={tFace || mood} gait={gait} wave={!walking && !tFace} />
+                      <CatBody size={BW} mood={tFace || mood} gait={gait} wave={!walking} />
                     </motion.div>
                     {line && line.who === 'frend' && <Bubble text={line.text} />}
                   </motion.div>
 
                   {/* meja, kasir, ban berjalan (di depan karakter, jadi mereka berdiri di baliknya) */}
-                  <Furniture moving={mode === 'kasir' && beltOn} laser={laser} />
+            <FurnitureM moving={mode === 'kasir' && beltOn} laser={laser} />
 
                   {/* barang di meja packing dan kantongnya */}
                   {showPack && (

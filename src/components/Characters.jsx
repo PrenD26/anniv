@@ -145,8 +145,10 @@ export function KoalaBody({ size = 100, mood = 'happy', wave = true, gait = 'idl
           <g className={wave && mood !== 'sad' ? 'ch-wave' : undefined}>
             <ellipse cx="245" cy="292" rx="14" ry="32" fill="#9c93c4" transform="rotate(-15 245 292)" />
           </g>
-          <g className={mood === 'laugh' ? 'ch-laugh-k' : 'ch-head-k'}>
-            <KoalaParts mood={mood} />
+                 <g className="ch-head-k">
+            <g className={mood === 'laugh' ? 'ch-laugh-k' : undefined}>
+              <KoalaParts mood={mood} />
+            </g>
           </g>
         </g>
       </g>
@@ -189,8 +191,10 @@ export function CatBody({ size = 100, mood = 'happy', wave = true, gait = 'idle'
             <rect x="446" y="325" width="8" height="5" rx="2" fill="#ff7f9c" />
           </g>
         )}
-        <g className={mood === 'laugh' ? 'ch-laugh-c' : 'ch-head-c'}>
-          <CatParts mood={mood} />
+              <g className="ch-head-c">
+          <g className={mood === 'laugh' ? 'ch-laugh-c' : undefined}>
+            <CatParts mood={mood} />
+          </g>
         </g>
       </g>
     </svg>
